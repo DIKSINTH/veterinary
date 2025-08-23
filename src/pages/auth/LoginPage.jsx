@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
   function handleSubmit(e) {
     e.preventDefault();
     if (!email || !password) {
@@ -10,6 +13,7 @@ export default function LoginPage() {
       return;
     }
     console.log("Login data:", { email, password });
+    navigate("/dashboard/super-admin");
     // 👉 Here you will call your backend API (PHP) for authentication
   }
 
