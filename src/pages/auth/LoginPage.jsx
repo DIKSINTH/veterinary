@@ -13,7 +13,7 @@ export default function LoginPage() {
       return;
     }
     console.log("Login data:", { email, password });
-    navigate("/dashboard/super-admin");
+    navigate("/dashboard/doctordashboard");
     // 👉 Here you will call your backend API (PHP) for authentication
   }
 
@@ -60,7 +60,7 @@ export default function LoginPage() {
 
         {/* Extra links */}
         <p className="mt-4 text-center text-gray-600">
-          Don’t have an account?{" "}
+          Don't have an account?{" "}
           <a href="/" className="text-sky-600 hover:underline">
             Register here
           </a>
