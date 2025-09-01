@@ -69,23 +69,23 @@ export default function TreatmentsList({ patients }) {
 
   return (
     <DoctorDashboard>
-      <div className="p-6 max-w-6xl mx-auto">
-        <h1 className="text-2xl font-bold mb-4 text-center">
+      <div className="p-4 sm:p-6 max-w-6xl mx-auto">
+        <h1 className="text-xl sm:text-2xl font-bold mb-4 text-center">
           Doctor Portal - Treatments List
         </h1>
 
         <div className="flex justify-end mb-4">
           <button
             onClick={handleAdd}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            className="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 text-sm sm:text-base"
           >
             + Add Treatment
           </button>
         </div>
 
-        {/* Treatments Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full border rounded-lg shadow-md">
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full border rounded-lg shadow-md text-sm">
             <thead className="bg-gray-200">
               <tr>
                 <th className="p-2 border">ID</th>
@@ -109,22 +109,22 @@ export default function TreatmentsList({ patients }) {
                   <td className="p-2 border">
                     {treatment.fileUploadTime || "N/A"}
                   </td>
-                  <td className="p-2 border space-x-2">
+                  <td className="p-2 border space-x-1 sm:space-x-2">
                     <button
                       onClick={() => handleView(treatment)}
-                      className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600"
+                      className="bg-gray-500 text-white px-2 sm:px-3 py-1 rounded text-xs sm:text-sm hover:bg-gray-600"
                     >
                       View
                     </button>
                     <button
                       onClick={() => handleEdit(treatment)}
-                      className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+                      className="bg-green-600 text-white px-2 sm:px-3 py-1 rounded text-xs sm:text-sm hover:bg-green-700"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(treatment.id)}
-                      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+                      className="bg-red-600 text-white px-2 sm:px-3 py-1 rounded text-xs sm:text-sm hover:bg-red-700"
                     >
                       Delete
                     </button>
@@ -142,16 +142,66 @@ export default function TreatmentsList({ patients }) {
           </table>
         </div>
 
+        {/* Mobile Card Layout */}
+        <div className="grid gap-4 md:hidden">
+          {treatments.map((treatment) => (
+            <div
+              key={treatment.id}
+              className="bg-white border rounded-lg p-4 shadow text-sm"
+            >
+              <p>
+                <strong>ID:</strong> {treatment.id}
+              </p>
+              <p>
+                <strong>Name:</strong> {treatment.name}
+              </p>
+              <p>
+                <strong>Patient:</strong> {treatment.patient}
+              </p>
+              <p>
+                <strong>Added At:</strong> {treatment.addedAt}
+              </p>
+              <p>
+                <strong>File Uploaded:</strong>{" "}
+                {treatment.fileUploadTime || "N/A"}
+              </p>
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={() => handleView(treatment)}
+                  className="flex-1 bg-gray-500 text-white py-1 rounded text-xs hover:bg-gray-600"
+                >
+                  View
+                </button>
+                <button
+                  onClick={() => handleEdit(treatment)}
+                  className="flex-1 bg-green-600 text-white py-1 rounded text-xs hover:bg-green-700"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(treatment.id)}
+                  className="flex-1 bg-red-600 text-white py-1 rounded text-xs hover:bg-red-700"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+          {treatments.length === 0 && (
+            <p className="text-gray-500 text-center">No treatments found.</p>
+          )}
+        </div>
+
         {/* Modal */}
         {modalType && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-            <div className="bg-white rounded-xl shadow-lg w-11/12 sm:w-1/2 p-6 relative">
-              <h2 className="text-xl font-bold mb-4 capitalize">
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 px-3">
+            <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-5 relative">
+              <h2 className="text-lg sm:text-xl font-bold mb-4 capitalize">
                 {modalType} Treatment
               </h2>
 
               {modalType === "view" ? (
-                <div>
+                <div className="space-y-2 text-sm">
                   <p>
                     <strong>ID:</strong> {selectedTreatment.id}
                   </p>
@@ -185,15 +235,15 @@ export default function TreatmentsList({ patients }) {
                         setModalType(null);
                         resetForm();
                       }}
-                      className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+                      className="bg-gray-600 text-white px-3 py-1 rounded text-sm hover:bg-gray-700"
                     >
                       Close
                     </button>
                   </div>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit}>
-                  <div className="mb-3">
+                <form onSubmit={handleSubmit} className="space-y-3 text-sm">
+                  <div>
                     <label className="block font-medium">Treatment ID</label>
                     <input
                       type="text"
@@ -206,7 +256,7 @@ export default function TreatmentsList({ patients }) {
                     />
                   </div>
 
-                  <div className="mb-3">
+                  <div>
                     <label className="block font-medium">Treatment Name</label>
                     <input
                       type="text"
@@ -219,7 +269,7 @@ export default function TreatmentsList({ patients }) {
                   </div>
 
                   {/* Patient Dropdown */}
-                  <div className="mb-3">
+                  <div>
                     <label className="block font-medium">Patient</label>
                     {patients && patients.length > 0 ? (
                       <select
@@ -237,13 +287,13 @@ export default function TreatmentsList({ patients }) {
                         ))}
                       </select>
                     ) : (
-                      <p className="text-red-500">
+                      <p className="text-red-500 text-sm">
                         No patients available. Add patients first.
                       </p>
                     )}
                   </div>
 
-                  <div className="mb-3">
+                  <div>
                     <label className="block font-medium">Description</label>
                     <textarea
                       name="description"
@@ -253,7 +303,7 @@ export default function TreatmentsList({ patients }) {
                     />
                   </div>
 
-                  <div className="mb-3">
+                  <div>
                     <label className="block font-medium">Upload File</label>
                     <input
                       type="file"
@@ -262,7 +312,7 @@ export default function TreatmentsList({ patients }) {
                       className="w-full border mt-1"
                     />
                     {fileUploadTime && (
-                      <p className="text-sm text-gray-500">
+                      <p className="text-xs text-gray-500 mt-1">
                         File Uploaded At: {fileUploadTime}
                       </p>
                     )}
@@ -275,13 +325,13 @@ export default function TreatmentsList({ patients }) {
                         setModalType(null);
                         resetForm();
                       }}
-                      className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+                      className="bg-gray-600 text-white px-3 py-1 rounded text-sm hover:bg-gray-700"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                      className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
                     >
                       {modalType === "add" ? "Add" : "Update"}
                     </button>

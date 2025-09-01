@@ -20,14 +20,7 @@ const PatientsList = ({ patients, setPatients }) => {
     setSelectedPatient(patient);
 
     if (type === "edit" || type === "view") {
-      setFormData({
-        id: patient.id,
-        name: patient.name,
-        breed: patient.breed,
-        age: patient.age,
-        condition: patient.condition,
-        ownername: patient.ownername,
-      });
+      setFormData({ ...patient });
     } else {
       setFormData({
         id: null,
@@ -53,10 +46,7 @@ const PatientsList = ({ patients, setPatients }) => {
 
   const handleSubmit = () => {
     if (modalType === "add") {
-      const newPatient = {
-        id: Date.now(),
-        ...formData,
-      };
+      const newPatient = { id: Date.now(), ...formData };
       setPatients([...patients, newPatient]);
     } else if (modalType === "edit") {
       setPatients(
@@ -74,67 +64,72 @@ const PatientsList = ({ patients, setPatients }) => {
 
   return (
     <DoctorDashboard>
-      <div className="p-6 max-w-5xl mx-auto">
-        <h1 className="text-2xl font-bold mb-4 text-center">
-          Doctor Portal - Patient List
+      <div className="p-4 sm:p-6 max-w-7xl mx-auto">
+        <h1 className="text-xl sm:text-2xl font-bold mb-6 text-center text-gray-800">
+          Patient List
         </h1>
+
+        {/* Add Patient Button */}
         <div className="flex justify-end mb-4">
           <button
             onClick={() => openModal("add")}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-sm sm:text-base"
           >
             + Add Patient
           </button>
         </div>
 
-        {/* Patient Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full border rounded-lg shadow-md">
-            <thead className="bg-gray-200">
+        {/* Table for md+ and Card View for mobile */}
+        <div className="hidden sm:block overflow-x-auto bg-white rounded-lg shadow-md">
+          <table className="w-full text-sm sm:text-base border-collapse">
+            <thead className="bg-gray-100 text-gray-700">
               <tr>
-                <th className="p-2 border">ID</th>
-                <th className="p-2 border">Name</th>
-                <th className="p-2 border">Breed</th>
-                <th className="p-2 border">Age</th>
-                <th className="p-2 border">Condition</th>
-                <th className="p-2 border">Owner Name</th>
-                <th className="p-2 border">Actions</th>
+                <th className="p-3 border">ID</th>
+                <th className="p-3 border">Name</th>
+                <th className="p-3 border">Breed</th>
+                <th className="p-3 border">Age</th>
+                <th className="p-3 border">Condition</th>
+                <th className="p-3 border">Owner</th>
+                <th className="p-3 border">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {patients.map((patient) => (
-                <tr key={patient.id} className="text-center hover:bg-gray-100">
-                  <td className="p-2 border">{patient.id}</td>
-                  <td className="p-2 border">{patient.name}</td>
-                  <td className="p-2 border">{patient.breed}</td>
-                  <td className="p-2 border">{patient.age}</td>
-                  <td className="p-2 border">{patient.condition}</td>
-                  <td className="p-2 border">{patient.ownername}</td>
-                  <td className="p-2 border space-x-2">
-                    <button
-                      onClick={() => openModal("view", patient)}
-                      className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600"
-                    >
-                      View
-                    </button>
-                    <button
-                      onClick={() => openModal("edit", patient)}
-                      className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(patient.id)}
-                      className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {patients.length === 0 && (
+              {patients.length > 0 ? (
+                patients.map((patient) => (
+                  <tr key={patient.id} className="text-center hover:bg-gray-50">
+                    <td className="p-2 border">{patient.id}</td>
+                    <td className="p-2 border">{patient.name}</td>
+                    <td className="p-2 border">{patient.breed}</td>
+                    <td className="p-2 border">{patient.age}</td>
+                    <td className="p-2 border">{patient.condition}</td>
+                    <td className="p-2 border">{patient.ownername}</td>
+                    <td className="p-2 border">
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        <button
+                          onClick={() => openModal("view", patient)}
+                          className="bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-600 text-xs"
+                        >
+                          View
+                        </button>
+                        <button
+                          onClick={() => openModal("edit", patient)}
+                          className="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 text-xs"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(patient.id)}
+                          className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 text-xs"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
                 <tr>
-                  <td colSpan="5" className="p-4 text-gray-500">
+                  <td colSpan="7" className="p-4 text-gray-500 text-center">
                     No patients found.
                   </td>
                 </tr>
@@ -143,19 +138,71 @@ const PatientsList = ({ patients, setPatients }) => {
           </table>
         </div>
 
+        {/* Mobile Card View */}
+        <div className="sm:hidden space-y-4">
+          {patients.length > 0 ? (
+            patients.map((patient) => (
+              <div
+                key={patient.id}
+                className="bg-white rounded-lg shadow-md p-4 text-sm space-y-2"
+              >
+                <p>
+                  <strong>ID:</strong> {patient.id}
+                </p>
+                <p>
+                  <strong>Name:</strong> {patient.name}
+                </p>
+                <p>
+                  <strong>Breed:</strong> {patient.breed}
+                </p>
+                <p>
+                  <strong>Age:</strong> {patient.age}
+                </p>
+                <p>
+                  <strong>Condition:</strong> {patient.condition}
+                </p>
+                <p>
+                  <strong>Owner:</strong> {patient.ownername}
+                </p>
+                <div className="flex gap-2 pt-2">
+                  <button
+                    onClick={() => openModal("view", patient)}
+                    className="flex-1 bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-600 text-xs"
+                  >
+                    View
+                  </button>
+                  <button
+                    onClick={() => openModal("edit", patient)}
+                    className="flex-1 bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 text-xs"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(patient.id)}
+                    className="flex-1 bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 text-xs"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-center text-gray-500">No patients found.</p>
+          )}
+        </div>
+
         {/* Modal */}
         {showModal && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-            <div className="bg-white rounded-xl shadow-lg w-11/12 sm:w-1/2 p-6 relative">
-              <h2 className="text-xl font-bold mb-4 capitalize">
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 px-4">
+            <div className="bg-white rounded-xl shadow-lg w-full max-w-lg p-6 relative">
+              <h2 className="text-lg sm:text-xl font-bold mb-4 capitalize text-gray-800">
                 {modalType} Patient
               </h2>
 
-              {/* View Mode */}
               {modalType === "view" ? (
-                <div>
+                <div className="space-y-2 text-gray-700 text-sm sm:text-base">
                   <p>
-                    <strong>Id:</strong> {formData.id}
+                    <strong>ID:</strong> {formData.id}
                   </p>
                   <p>
                     <strong>Name:</strong> {formData.name}
@@ -170,31 +217,20 @@ const PatientsList = ({ patients, setPatients }) => {
                     <strong>Condition:</strong> {formData.condition}
                   </p>
                   <p>
-                    <strong>Owner Name:</strong> {formData.ownername}
+                    <strong>Owner:</strong> {formData.ownername}
                   </p>
                   <div className="mt-4 text-right">
                     <button
                       onClick={closeModal}
-                      className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+                      className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 text-sm"
                     >
                       Close
                     </button>
                   </div>
                 </div>
               ) : (
-                // Add/Edit Form
-                <div>
-                  <div className="mb-3">
-                    <label className="block font-medium">Id</label>
-                    <input
-                      type="text"
-                      name="id"
-                      value={formData.id}
-                      onChange={handleChange}
-                      className="w-full border rounded px-3 py-2 mt-1"
-                    />
-                  </div>
-                  <div className="mb-3">
+                <div className="space-y-3 text-sm sm:text-base">
+                  <div>
                     <label className="block font-medium">Name</label>
                     <input
                       type="text"
@@ -204,7 +240,7 @@ const PatientsList = ({ patients, setPatients }) => {
                       className="w-full border rounded px-3 py-2 mt-1"
                     />
                   </div>
-                  <div className="mb-3">
+                  <div>
                     <label className="block font-medium">Breed</label>
                     <input
                       type="text"
@@ -214,7 +250,7 @@ const PatientsList = ({ patients, setPatients }) => {
                       className="w-full border rounded px-3 py-2 mt-1"
                     />
                   </div>
-                  <div className="mb-3">
+                  <div>
                     <label className="block font-medium">Age</label>
                     <input
                       type="number"
@@ -224,7 +260,7 @@ const PatientsList = ({ patients, setPatients }) => {
                       className="w-full border rounded px-3 py-2 mt-1"
                     />
                   </div>
-                  <div className="mb-3">
+                  <div>
                     <label className="block font-medium">Condition</label>
                     <input
                       type="text"
@@ -234,8 +270,8 @@ const PatientsList = ({ patients, setPatients }) => {
                       className="w-full border rounded px-3 py-2 mt-1"
                     />
                   </div>
-                  <div className="mb-3">
-                    <label className="block font-medium">Owner Name</label>
+                  <div>
+                    <label className="block font-medium">Owner</label>
                     <input
                       type="text"
                       name="ownername"
@@ -244,16 +280,16 @@ const PatientsList = ({ patients, setPatients }) => {
                       className="w-full border rounded px-3 py-2 mt-1"
                     />
                   </div>
-                  <div className="flex justify-end space-x-2">
+                  <div className="flex justify-end space-x-2 pt-3">
                     <button
                       onClick={closeModal}
-                      className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+                      className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 text-sm"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleSubmit}
-                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
                     >
                       Save
                     </button>
