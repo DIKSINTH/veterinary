@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import DoctorDashboard from "./dashboard/DoctorDashboard.jsx";
 
-const PatientsList = ({ patients, setPatients }) => {
+const PatientsList = ({ patients, setPatients, treatments }) => {
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState("");
   const [selectedPatient, setSelectedPatient] = useState(null);
 
   const [formData, setFormData] = useState({
-    id: null,
+    id: "",
     name: "",
     breed: "",
     age: "",
@@ -23,7 +23,7 @@ const PatientsList = ({ patients, setPatients }) => {
       setFormData({ ...patient });
     } else {
       setFormData({
-        id: null,
+        id: "",
         name: "",
         breed: "",
         age: "",
@@ -46,7 +46,7 @@ const PatientsList = ({ patients, setPatients }) => {
 
   const handleSubmit = () => {
     if (modalType === "add") {
-      const newPatient = { id: Date.now(), ...formData };
+      const newPatient = { ...formData };
       setPatients([...patients, newPatient]);
     } else if (modalType === "edit") {
       setPatients(
@@ -79,7 +79,7 @@ const PatientsList = ({ patients, setPatients }) => {
           </button>
         </div>
 
-        {/* Table for md+ and Card View for mobile */}
+        {/* Desktop Table */}
         <div className="hidden sm:block overflow-x-auto bg-white rounded-lg shadow-md">
           <table className="w-full text-sm sm:text-base border-collapse">
             <thead className="bg-gray-100 text-gray-700">
@@ -138,59 +138,6 @@ const PatientsList = ({ patients, setPatients }) => {
           </table>
         </div>
 
-        {/* Mobile Card View */}
-        <div className="sm:hidden space-y-4">
-          {patients.length > 0 ? (
-            patients.map((patient) => (
-              <div
-                key={patient.id}
-                className="bg-white rounded-lg shadow-md p-4 text-sm space-y-2"
-              >
-                <p>
-                  <strong>ID:</strong> {patient.id}
-                </p>
-                <p>
-                  <strong>Name:</strong> {patient.name}
-                </p>
-                <p>
-                  <strong>Breed:</strong> {patient.breed}
-                </p>
-                <p>
-                  <strong>Age:</strong> {patient.age}
-                </p>
-                <p>
-                  <strong>Condition:</strong> {patient.condition}
-                </p>
-                <p>
-                  <strong>Owner:</strong> {patient.ownername}
-                </p>
-                <div className="flex gap-2 pt-2">
-                  <button
-                    onClick={() => openModal("view", patient)}
-                    className="flex-1 bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-600 text-xs"
-                  >
-                    View
-                  </button>
-                  <button
-                    onClick={() => openModal("edit", patient)}
-                    className="flex-1 bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 text-xs"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(patient.id)}
-                    className="flex-1 bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 text-xs"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-500">No patients found.</p>
-          )}
-        </div>
-
         {/* Modal */}
         {showModal && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 px-4">
@@ -219,6 +166,26 @@ const PatientsList = ({ patients, setPatients }) => {
                   <p>
                     <strong>Owner:</strong> {formData.ownername}
                   </p>
+
+                  {/* Treatments list */}
+                  <div className="mt-4">
+                    <strong>Treatments:</strong>
+                    {treatments.filter((t) => t.patientId === formData.id)
+                      .length > 0 ? (
+                      <ul className="list-disc ml-6 mt-2 space-y-1">
+                        {treatments
+                          .filter((t) => t.patientId === formData.id)
+                          .map((t) => (
+                            <li key={t.id}>
+                              {t.name} ({t.description || "No description"})
+                            </li>
+                          ))}
+                      </ul>
+                    ) : (
+                      <p className="text-gray-500 mt-1">No treatments yet.</p>
+                    )}
+                  </div>
+
                   <div className="mt-4 text-right">
                     <button
                       onClick={closeModal}
@@ -231,6 +198,18 @@ const PatientsList = ({ patients, setPatients }) => {
               ) : (
                 <div className="space-y-3 text-sm sm:text-base">
                   <div>
+                    <label className="block font-medium">Patient ID</label>
+                    <input
+                      type="text"
+                      name="id"
+                      value={formData.id}
+                      onChange={handleChange}
+                      className="w-full border rounded px-3 py-2 mt-1"
+                      required
+                      disabled={modalType === "edit"}
+                    />
+                  </div>
+                  <div>
                     <label className="block font-medium">Name</label>
                     <input
                       type="text"
@@ -238,6 +217,7 @@ const PatientsList = ({ patients, setPatients }) => {
                       value={formData.name}
                       onChange={handleChange}
                       className="w-full border rounded px-3 py-2 mt-1"
+                      required
                     />
                   </div>
                   <div>

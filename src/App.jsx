@@ -8,8 +8,9 @@ import TreatmentsList from "./pages/TreatmentsList.jsx";
 import { useState } from "react";
 
 function App() {
-  // Global state for patients
+  // Global state
   const [patients, setPatients] = useState([]);
+  const [treatments, setTreatments] = useState([]); // ✅ new
 
   return (
     <BrowserRouter>
@@ -28,7 +29,13 @@ function App() {
         />
         <Route
           path="/treatmentslist"
-          element={<TreatmentsList patients={patients} />}
+          element={
+            <TreatmentsList
+              patients={patients}
+              treatments={treatments} // ✅ pass state
+              setTreatments={setTreatments} // ✅ pass setter
+            />
+          }
         />
       </Routes>
     </BrowserRouter>
