@@ -10,52 +10,69 @@ export default function TreatmentsList({
   const [modalType, setModalType] = useState(null);
   const [selectedTreatment, setSelectedTreatment] = useState(null);
 
+  // Reset form
   const resetForm = () => {
     setFormData({});
     setSelectedTreatment(null);
   };
 
+  // Input change handler
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  // Add treatment
   const handleAdd = () => {
     resetForm();
     setModalType("add");
   };
 
+  // Edit treatment
   const handleEdit = (treatment) => {
     setFormData(treatment);
     setSelectedTreatment(treatment);
     setModalType("edit");
   };
 
+  // View treatment
   const handleView = (treatment) => {
     setSelectedTreatment(treatment);
     setModalType("view");
   };
 
+  // Delete treatment
   const handleDelete = (id) => {
-    setTreatments(treatments.filter((t) => t.id !== id));
+    if (window.confirm("Are you sure you want to delete this treatment?")) {
+      setTreatments(treatments.filter((t) => t.id !== id));
+      alert("✅ Treatment deleted successfully!");
+    }
   };
 
+  // Submit form (Add/Edit)
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (modalType === "add") {
+      // Ensure unique ID
+      const idExists = treatments.some((t) => t.id === formData.id);
+      if (idExists) {
+        alert("⚠️ Treatment ID must be unique. Please use another ID.");
+        return;
+      }
+
       const newTreatment = {
         ...formData,
-        id: formData.id,
-        patientId: formData.patientId,
         addedAt: new Date().toLocaleString(),
       };
       setTreatments([...treatments, newTreatment]);
+      alert("✅ Treatment added successfully!");
     } else if (modalType === "edit") {
       const updatedTreatments = treatments.map((t) =>
         t.id === selectedTreatment.id ? { ...formData } : t
       );
       setTreatments(updatedTreatments);
+      alert("✅ Treatment updated successfully!");
     }
 
     setModalType(null);
@@ -69,6 +86,7 @@ export default function TreatmentsList({
           Treatments List
         </h1>
 
+        {/* Add Button */}
         <div className="flex justify-end mb-4">
           <button
             onClick={handleAdd}
@@ -136,6 +154,58 @@ export default function TreatmentsList({
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile View */}
+        <div className="sm:hidden space-y-3">
+          {treatments.length > 0 ? (
+            treatments.map((t) => (
+              <div
+                key={t.id}
+                className="bg-white p-4 rounded-lg shadow flex flex-col space-y-2"
+              >
+                <p>
+                  <strong>ID:</strong> {t.id}
+                </p>
+                <p>
+                  <strong>Name:</strong> {t.name}
+                </p>
+                <p>
+                  <strong>Patient:</strong>{" "}
+                  {patients.find((p) => p.id === t.patientId)?.name ||
+                    "Unknown"}
+                </p>
+                <p>
+                  <strong>Description:</strong> {t.description}
+                </p>
+                <p>
+                  <strong>Added At:</strong> {t.addedAt}
+                </p>
+                <div className="flex gap-2 pt-2">
+                  <button
+                    onClick={() => handleView(t)}
+                    className="bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-600 text-xs"
+                  >
+                    View
+                  </button>
+                  <button
+                    onClick={() => handleEdit(t)}
+                    className="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 text-xs"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(t.id)}
+                    className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 text-xs"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-center text-gray-500">No treatments found.</p>
+          )}
         </div>
 
         {/* Modal */}

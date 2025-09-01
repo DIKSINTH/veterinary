@@ -15,6 +15,7 @@ const PatientsList = ({ patients, setPatients, treatments }) => {
     ownername: "",
   });
 
+  // 🔹 Open modal for add/edit/view
   const openModal = (type, patient = null) => {
     setModalType(type);
     setSelectedPatient(patient);
@@ -35,19 +36,32 @@ const PatientsList = ({ patients, setPatients, treatments }) => {
     setShowModal(true);
   };
 
+  // 🔹 Close modal
   const closeModal = () => {
     setShowModal(false);
     setSelectedPatient(null);
   };
 
+  // 🔹 Handle form change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // 🔹 Save patient (add/edit)
   const handleSubmit = () => {
+    if (!formData.id || !formData.name) {
+      alert("⚠️ Patient ID and Name are required!");
+      return;
+    }
+
     if (modalType === "add") {
-      const newPatient = { ...formData };
-      setPatients([...patients, newPatient]);
+      // check unique ID
+      const idExists = patients.some((p) => p.id === formData.id);
+      if (idExists) {
+        alert("⚠️ Patient ID must be unique!");
+        return;
+      }
+      setPatients([...patients, { ...formData }]);
     } else if (modalType === "edit") {
       setPatients(
         patients.map((p) =>
@@ -58,8 +72,11 @@ const PatientsList = ({ patients, setPatients, treatments }) => {
     closeModal();
   };
 
+  // 🔹 Delete patient
   const handleDelete = (id) => {
-    setPatients(patients.filter((p) => p.id !== id));
+    if (window.confirm("Are you sure you want to delete this patient?")) {
+      setPatients(patients.filter((p) => p.id !== id));
+    }
   };
 
   return (
@@ -167,7 +184,7 @@ const PatientsList = ({ patients, setPatients, treatments }) => {
                     <strong>Owner:</strong> {formData.ownername}
                   </p>
 
-                  {/* Treatments list */}
+                  {/* Treatments */}
                   <div className="mt-4">
                     <strong>Treatments:</strong>
                     {treatments.filter((t) => t.patientId === formData.id)
@@ -177,7 +194,7 @@ const PatientsList = ({ patients, setPatients, treatments }) => {
                           .filter((t) => t.patientId === formData.id)
                           .map((t) => (
                             <li key={t.id}>
-                              {t.name} ({t.description || "No description"})
+                              {t.description || "No description"}
                             </li>
                           ))}
                       </ul>
