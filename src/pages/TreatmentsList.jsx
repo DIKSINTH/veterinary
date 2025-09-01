@@ -10,38 +10,32 @@ export default function TreatmentsList({
   const [modalType, setModalType] = useState(null);
   const [selectedTreatment, setSelectedTreatment] = useState(null);
 
-  // Reset form
   const resetForm = () => {
     setFormData({});
     setSelectedTreatment(null);
   };
 
-  // Input change handler
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Add treatment
   const handleAdd = () => {
     resetForm();
     setModalType("add");
   };
 
-  // Edit treatment
   const handleEdit = (treatment) => {
     setFormData(treatment);
     setSelectedTreatment(treatment);
     setModalType("edit");
   };
 
-  // View treatment
   const handleView = (treatment) => {
     setSelectedTreatment(treatment);
     setModalType("view");
   };
 
-  // Delete treatment
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this treatment?")) {
       setTreatments(treatments.filter((t) => t.id !== id));
@@ -49,7 +43,6 @@ export default function TreatmentsList({
     }
   };
 
-  // Submit form (Add/Edit)
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -156,7 +149,7 @@ export default function TreatmentsList({
           </table>
         </div>
 
-        {/* Mobile View */}
+        {/* Mobile Card View */}
         <div className="sm:hidden space-y-3">
           {treatments.length > 0 ? (
             treatments.map((t) => (
