@@ -138,6 +138,59 @@ const PatientsList = ({ patients, setPatients, treatments }) => {
           </table>
         </div>
 
+        {/* Mobile View */}
+        <div className="sm:hidden space-y-4">
+          {patients.length > 0 ? (
+            patients.map((patient) => (
+              <div
+                key={patient.id}
+                className="bg-white shadow-md rounded-lg p-4 border"
+              >
+                <p>
+                  <strong>ID:</strong> {patient.id}
+                </p>
+                <p>
+                  <strong>Name:</strong> {patient.name}
+                </p>
+                <p>
+                  <strong>Breed:</strong> {patient.breed}
+                </p>
+                <p>
+                  <strong>Age:</strong> {patient.age}
+                </p>
+                <p>
+                  <strong>Condition:</strong> {patient.condition}
+                </p>
+                <p>
+                  <strong>Owner:</strong> {patient.ownername}
+                </p>
+                <div className="flex flex-wrap gap-2 justify-end mt-2">
+                  <button
+                    onClick={() => openModal("view", patient)}
+                    className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 text-xs"
+                  >
+                    View
+                  </button>
+                  <button
+                    onClick={() => openModal("edit", patient)}
+                    className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-xs"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(patient.id)}
+                    className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500 text-center">No patients found.</p>
+          )}
+        </div>
+
         {/* Modal */}
         {showModal && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 px-4">
@@ -167,7 +220,6 @@ const PatientsList = ({ patients, setPatients, treatments }) => {
                     <strong>Owner:</strong> {formData.ownername}
                   </p>
 
-                  {/* Treatments list */}
                   <div className="mt-4">
                     <strong>Treatments:</strong>
                     {treatments.filter((t) => t.patientId === formData.id)
